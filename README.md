@@ -29,6 +29,9 @@ https://github.com/user-attachments/assets/6c168a57-7b3c-4304-adfc-d2d9f486735c
 If using USBTiny programmer on linux you may have to run the upload command with sudo because
 of permission issues.
 
+Another gotcha with the USBTiny is if it has an LED on the SDA pin it will mess with
+your data line. So don't use the USBTiny programmer to test your ATtiny85.
+
 ## Setup in WSL
 
 If you are trying to develop in WSL you need to forward the USB device onto the WSL environment.
