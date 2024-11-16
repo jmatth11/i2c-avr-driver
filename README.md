@@ -1,6 +1,6 @@
 # AVR I2C Driver Example
 
-This project is to have a simple example of an primary I2C communication on an ATtiny85 with documentation.
+This project is to have a simple example of a primary I2C communication on an ATtiny85 with documentation.
 
 Supports writing and reading from secondary devices.
 
