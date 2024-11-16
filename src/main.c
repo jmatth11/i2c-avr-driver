@@ -33,13 +33,11 @@ int main (void) {
       // error occurred.
       error_loop();
     }
-    bool failed = false;
     for (int i = 0; i < test_text_len; ++i) {
       if (i2c_write_byte(test_text[i]) & 0x01) {
-        failed = true;
+        error_loop();
       }
     }
-    if (failed) break;
     i2c_stop();
     _delay_ms(1000);
 

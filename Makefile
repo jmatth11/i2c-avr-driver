@@ -23,9 +23,9 @@ MCU=attiny85
 # TARGET_PLATFORM=m328p
 # for attiny85
 TARGET_PLATFORM=t85
-USB_PORT=usb:001:008
+USB_PORT=usb:001:009
 
-LD_FLAGS=-D__AVR_ATtiny85__=1 -DF_CPU=$(CLOCK_FREQ)
+LD_FLAGS=-DF_CPU=$(CLOCK_FREQ)
 
 # Remove section when generating file
 SECTION=.eeprom
