@@ -15,6 +15,13 @@ Supports writing and reading from secondary devices.
 
 ## Demo
 
+The demo has an ATtiny85 loaded with the code in this project hooked up to an arduino uno using the Wire library to
+act as a secondary device to talk to.
+
+Actions performed:
+- The primary (ATtiny85) sends "Hello, World!" to the secondary (Arduino Uno) device.
+- The primary requests a read from the secondary to toggle the LED.
+
 https://github.com/user-attachments/assets/6c168a57-7b3c-4304-adfc-d2d9f486735c
 
 ## USBTiny
