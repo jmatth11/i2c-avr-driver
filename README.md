@@ -1,19 +1,26 @@
-# AVR Setup
+# AVR I2C Driver Example
 
-This project is to have a base project that explains the setup process to develop for AVR chips.
+This project is to have a simple example of an primary I2C communication on an ATtiny85 with documentation.
+
+Supports writing and reading from secondary devices.
 
 ## Project Structure
 
-- main.c The blink project
-- install_deps.sh Run this to install all the tools needed to build and flash AVR projects.
-- Makefile Contains commands to build and burn the AVR project.
-- compile_flags.txt Contains setup flags to work with the C LSP (clangd)
+- `src` The main source code folder
+- `src/main.c` The main file for using the I2C driver.
+- `src/driver/i2c.[h|c]` The I2C driver implementation files.
+- `install_deps.sh` Run this to install all the tools needed to build and flash AVR projects.
+- `Makefile` Contains commands to build and burn the AVR project.
+- `compile_flags.txt` Contains setup flags to work with the C LSP (clangd)
+
+## Demo
+
+https://github.com/user-attachments/assets/6c168a57-7b3c-4304-adfc-d2d9f486735c
 
 ## USBTiny
 
 If using USBTiny programmer on linux you may have to run the upload command with sudo because
 of permission issues.
-
 
 ## Setup in WSL
 
