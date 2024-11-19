@@ -2,6 +2,7 @@
 #include <util/delay.h>
 
 // data sheet says between 50 and 300 nanoseconds
+// this is 0.2 microseconds which is 200 nanoseconds
 #define WAIT 0.2
 
 #define STATUS_CLOCK_8_BITS (_BV(USISIF)|_BV(USIOIF)|_BV(USIPF)|_BV(USIDC) | \
@@ -156,23 +157,23 @@ unsigned char i2c_write_byte(unsigned char data) {
 /**
  * Read the next byte.
  *
- * @param[in] nack True for reading more, false otherwise.
+ * @param[in] ack True for reading more, false otherwise.
  * @return The read byte.
  */
-unsigned char i2c_read_byte(bool nack) {
+unsigned char i2c_read_byte(bool ack) {
   // change data pin to input
   i2c_bus &= ~_BV(i2c_sda);
   unsigned char data = transfer(STATUS_CLOCK_8_BITS);
   // change back to output
   i2c_bus |= _BV(i2c_sda);
-  if (nack) {
-    // HIGH means read another byte
+  if (ack) {
+    // LOW means read another byte
     i2c_data = 0x00;
   } else {
-    // LOW means stop sending
+    // HIGH means stop sending
     i2c_data = 0xff;
   }
-  // send nack
+  // send n/ack
   transfer(STATUS_CLOCK_1_BIT);
   return data;
 }

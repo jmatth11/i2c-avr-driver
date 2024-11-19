@@ -41,7 +41,8 @@ int main (void) {
     i2c_stop();
     _delay_ms(1000);
 
-    if(!i2c_start()) break;
+    if(!i2c_start()) error_loop();
+
     i2c_write_address(TARGET_ADDR, false);
 
     unsigned char byte = i2c_read_byte(false);

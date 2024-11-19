@@ -1,8 +1,8 @@
 # AVR I2C Driver Example
 
-This project is to have a simple example of a primary I2C communication on an ATtiny85 with documentation.
+This project is to have a simple example of a controller I2C communication on an ATtiny85 with documentation.
 
-Supports writing and reading from secondary devices.
+Supports writing and reading from target devices.
 
 ## Project Structure
 
@@ -16,11 +16,11 @@ Supports writing and reading from secondary devices.
 ## Demo
 
 The demo has an ATtiny85 loaded with the code in this project hooked up to an arduino uno using the Wire library to
-act as a secondary device to talk to.
+act as a target device to talk to.
 
 Actions performed:
-- The primary (ATtiny85) sends "Hello, World!" to the secondary (Arduino Uno) device.
-- The primary requests a read from the secondary to toggle the LED.
+- The controller (ATtiny85) sends "Hello, World!" to the target (Arduino Uno) device.
+- The controller requests a read from the target to toggle the LED.
 
 https://github.com/user-attachments/assets/6c168a57-7b3c-4304-adfc-d2d9f486735c
 
