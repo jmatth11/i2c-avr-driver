@@ -4,6 +4,21 @@
 #include <avr/io.h>
 #include <stdbool.h>
 
+
+// These numbers are from a calculation chart
+// from I2C spec -- NXP I2C Timing Specification
+#ifdef I2C_FAST_MODE // 400kHz fast
+  // low period of SCL
+  #define T2_TWI 2 // >1.3microseconds
+  // high period of SCL
+  #define T4_TWI 1 // >0.6microseconds
+#else // 100kHz standard
+  // low period of SCL
+  #define T2_TWI 5 // >4.7microseconds
+  // high period of SCL
+  #define T4_TWI 4 // >4.0microseconds
+#endif
+
 #ifndef i2c_bus
   #define i2c_bus DDRB
 #endif

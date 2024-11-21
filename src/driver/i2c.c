@@ -1,9 +1,9 @@
 #include "i2c.h"
 #include <util/delay.h>
 
-// data sheet says between 50 and 300 nanoseconds
+// data sheet says sampling time is between 50 and 300 nanoseconds
 // this is 0.2 microseconds which is 200 nanoseconds
-#define WAIT 0.2
+#define SAMPLING_WAIT 0.2
 
 #define STATUS_CLOCK_8_BITS (_BV(USISIF)|_BV(USIOIF)|_BV(USIPF)|_BV(USIDC) | \
     (0x0 << USICNT0)) // reset clock to allow for full 8 byte transfer
@@ -67,12 +67,12 @@ bool i2c_start() {
   i2c_port |= _BV(i2c_scl);
   // wait till clock pin is high
   while (!(i2c_port & _BV(i2c_scl)));
-  _delay_us(WAIT);
+  _delay_us(T2_TWI);
 
   // pull data line low
   i2c_port &= ~_BV(i2c_sda);
-  // wait some time
-  _delay_us(WAIT);
+  // this is sampling time for the attiny85 to recognize the start command
+  _delay_us(SAMPLING_WAIT);
   // pull clock line low
   i2c_port &= ~_BV(i2c_scl);
 
@@ -98,11 +98,11 @@ void i2c_stop() {
   i2c_port |= _BV(i2c_scl);
   // wait for clock pin to read high
   while (!(i2c_pin & _BV(i2c_scl)));
-  _delay_us(WAIT);
+  _delay_us(T4_TWI);
 
   // relase data line to high
   i2c_port |= _BV(i2c_sda);
-  _delay_us(WAIT);
+  _delay_us(T2_TWI);
 }
 
 unsigned char transfer(unsigned char mask) {
@@ -115,18 +115,18 @@ unsigned char transfer(unsigned char mask) {
            (1<<USITC); // toggle clock
   do {
     // wait a little bit
-    _delay_us(WAIT);
+    _delay_us(T2_TWI);
     // toggle clock
     i2c_control = temp;
     // wait for SCL to go high
     while (! (i2c_pin & _BV(i2c_scl)));
     // wait short
-    _delay_us(WAIT);
+    _delay_us(T4_TWI);
     // toggle clock again
     i2c_control = temp;
 
   } while (!(i2c_status & _BV(USIOIF)));
-  _delay_us(WAIT);
+  _delay_us(T2_TWI);
 
   // clear status
   i2c_status |= _BV(USIOIF);
@@ -161,19 +161,19 @@ unsigned char i2c_write_byte(unsigned char data) {
  * @return The read byte.
  */
 unsigned char i2c_read_byte(bool ack) {
+  // HIGH value means stop sending
+  unsigned char response = 0xff;
+  if (ack) {
+    // LOW means read another byte
+    response = 0x00;
+  }
   // change data pin to input
   i2c_bus &= ~_BV(i2c_sda);
   unsigned char data = transfer(STATUS_CLOCK_8_BITS);
   // change back to output
   i2c_bus |= _BV(i2c_sda);
-  if (ack) {
-    // LOW means read another byte
-    i2c_data = 0x00;
-  } else {
-    // HIGH means stop sending
-    i2c_data = 0xff;
-  }
   // send n/ack
+  i2c_data = response;
   transfer(STATUS_CLOCK_1_BIT);
   return data;
 }
