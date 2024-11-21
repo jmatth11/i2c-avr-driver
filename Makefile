@@ -13,8 +13,8 @@ BAUD=115200
 # the programmer to flash the device
 PROGRAMMER=usbtiny
 # the clocks frequency
-CLOCK_FREQ=16000000UL
-#CLOCK_FREQ=1000000UL
+#CLOCK_FREQ=16000000UL
+CLOCK_FREQ=1000000UL
 # memory operation to perform on target (flash operation to write the hex file to)
 MEM_OP=flash:w:bin/main.hex:i
 MCU=attiny85
@@ -23,7 +23,7 @@ MCU=attiny85
 # TARGET_PLATFORM=m328p
 # for attiny85
 TARGET_PLATFORM=t85
-USB_PORT=usb:001:009
+USB_PORT=usb:001:010
 
 LD_FLAGS=-DF_CPU=$(CLOCK_FREQ)
 
@@ -50,7 +50,7 @@ upload: build
 
 .PHONY: fuse
 fuse:
-	avrdude -c $(PROGRAMMER) -p $(TARGET_PLATFORM) -U hfuse:w:0xDD:m -U lfuse:w:0xF1:m
+	avrdude -c $(PROGRAMMER) -p $(TARGET_PLATFORM) -U hfuse:w:0xDD:m -U lfuse:w:0x60:m
 
 .PHONY: clean
 clean:
