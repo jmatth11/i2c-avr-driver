@@ -46,16 +46,16 @@ void i2c_init() {
     (0x0 << USICNT0)
   );
   // flip the ports to input mode so we can enable pullup resistors on the next line
-  i2c_bus &= ~_BV(i2c_sda);
-  i2c_bus &= ~_BV(i2c_scl);
+  i2c_ddr &= ~_BV(i2c_sda);
+  i2c_ddr &= ~_BV(i2c_scl);
 
   // set both pins to HIGH to enable pullup.
   i2c_port |= _BV(i2c_sda);
   i2c_port |= _BV(i2c_scl);
 
   // flip the ports to output mode
-  i2c_bus |= _BV(i2c_sda);
-  i2c_bus |= _BV(i2c_scl);
+  i2c_ddr |= _BV(i2c_sda);
+  i2c_ddr |= _BV(i2c_scl);
 }
 
 /**
@@ -147,10 +147,10 @@ unsigned char i2c_write_byte(unsigned char data) {
   transfer(STATUS_CLOCK_8_BITS);
 
   // change data pin to input
-  i2c_bus &= ~_BV(i2c_sda);
+  i2c_ddr &= ~_BV(i2c_sda);
   unsigned char nack = transfer(STATUS_CLOCK_1_BIT);
   // change back to output
-  i2c_bus |= _BV(i2c_sda);
+  i2c_ddr |= _BV(i2c_sda);
   return nack;
 }
 
@@ -168,10 +168,10 @@ unsigned char i2c_read_byte(bool ack) {
     response = 0x00;
   }
   // change data pin to input
-  i2c_bus &= ~_BV(i2c_sda);
+  i2c_ddr &= ~_BV(i2c_sda);
   unsigned char data = transfer(STATUS_CLOCK_8_BITS);
   // change back to output
-  i2c_bus |= _BV(i2c_sda);
+  i2c_ddr |= _BV(i2c_sda);
   // send n/ack
   i2c_data = response;
   transfer(STATUS_CLOCK_1_BIT);

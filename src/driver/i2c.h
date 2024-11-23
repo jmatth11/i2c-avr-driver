@@ -19,8 +19,8 @@
   #define T4_TWI 4 // >4.0microseconds
 #endif
 
-#ifndef i2c_bus
-  #define i2c_bus DDRB
+#ifndef i2c_ddr
+  #define i2c_ddr DDRB
 #endif
 #ifndef i2c_port
   #define i2c_port PORTB
@@ -51,6 +51,7 @@ void i2c_init();
 
 /**
  * Send start command.
+ * @return True if the start successfully initiated, False otherwise.
  */
 bool i2c_start();
 
