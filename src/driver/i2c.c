@@ -102,26 +102,22 @@ unsigned char transfer(unsigned char mask) {
   i2c_port &= ~_BV(i2c_scl);
   i2c_status = mask;
 
-  unsigned char temp = (0<<USISIE)|(0<<USIOIE)| // Interrupts disabled
-           (1<<USIWM1)|(0<<USIWM0)|             // Set USI in Two-wire mode.
-           (1<<USICS1)|(0<<USICS0)|(1<<USICLK)| // Software clock strobe as source.
-           (1<<USITC); // toggle clock
   do {
     // wait a little bit
     _delay_us(T2_TWI);
     // toggle clock
-    i2c_control = temp;
+    i2c_control |= _BV(USITC);
     // wait for SCL to go high
     while (! (i2c_pin & _BV(i2c_scl)));
     // wait short
     _delay_us(T4_TWI);
     // toggle clock again
-    i2c_control = temp;
+    i2c_control = _BV(USITC);
 
   } while (!(i2c_status & _BV(USIOIF)));
   _delay_us(T2_TWI);
 
-  // clear status
+  // clear counter overflow status
   i2c_status |= _BV(USIOIF);
 
   unsigned char data = i2c_data;
