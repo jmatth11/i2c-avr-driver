@@ -31,8 +31,7 @@ void i2c_init() {
     _BV(USIWM1) | (0<<USIWM0) |
     // set CS1 and CLK to high to use external clock source
     // with positive edge. Software Clock Strobe (with USITC register)
-    _BV(USICS1) | (0<<USICS0) |
-    _BV(USICLK) |
+    _BV(USICS1) | (0<<USICS0) | _BV(USICLK) |
     (0<<USITC)
   );
 
@@ -50,12 +49,10 @@ void i2c_init() {
   i2c_ddr &= ~_BV(i2c_scl);
 
   // set both pins to HIGH to enable pullup.
-  i2c_port |= _BV(i2c_sda);
-  i2c_port |= _BV(i2c_scl);
+  i2c_port |= (_BV(i2c_sda) | _BV(i2c_scl));
 
   // flip the ports to output mode
-  i2c_ddr |= _BV(i2c_sda);
-  i2c_ddr |= _BV(i2c_scl);
+  i2c_ddr |= (_BV(i2c_sda) | _BV(i2c_scl));
 }
 
 /**
@@ -63,8 +60,7 @@ void i2c_init() {
  */
 bool i2c_start() {
   // ensure both lines are high
-  i2c_port |= _BV(i2c_sda);
-  i2c_port |= _BV(i2c_scl);
+  i2c_port |= (_BV(i2c_sda) | _BV(i2c_scl));
   // wait till clock pin is high
   while (!(i2c_port & _BV(i2c_scl)));
   _delay_us(T2_TWI);
@@ -80,10 +76,7 @@ bool i2c_start() {
   i2c_port |= _BV(i2c_sda);
 
   // check for valid start
-  if (! (i2c_status & _BV(USISIF))) {
-    return false;
-  }
-  return true;
+  return (i2c_status & _BV(USISIF));
 }
 
 /**
