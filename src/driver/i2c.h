@@ -4,6 +4,8 @@
 #include <avr/io.h>
 #include <stdbool.h>
 
+#define I2C_ACK 0x00
+#define I2C_NACK 0xFF
 
 // These numbers are from a calculation chart
 // from I2C spec -- NXP I2C Timing Specification

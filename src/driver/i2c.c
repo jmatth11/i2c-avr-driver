@@ -6,7 +6,7 @@
 #define SAMPLING_WAIT 0.2
 
 #define STATUS_CLOCK_8_BITS (_BV(USISIF)|_BV(USIOIF)|_BV(USIPF)|_BV(USIDC) | \
-    (0x0 << USICNT0)) // reset clock to allow for full 8 byte transfer
+    (0x0 << USICNT0)) // reset clock to allow for full 8 bit transfer
 
 #define STATUS_CLOCK_1_BIT (_BV(USISIF) | \
    _BV(USIOIF) | \
@@ -37,10 +37,7 @@ void i2c_init() {
 
   i2c_status = (
     // clear all flags
-    _BV(USISIF) |
-    _BV(USIOIF) |
-    _BV(USIPF) |
-    _BV(USIDC) |
+    _BV(USISIF) | _BV(USIOIF) | _BV(USIPF) | _BV(USIDC) |
     // reset overflow counter
     (0x0 << USICNT0)
   );
@@ -62,7 +59,7 @@ bool i2c_start() {
   // ensure both lines are high
   i2c_port |= (_BV(i2c_sda) | _BV(i2c_scl));
   // wait till clock pin is high
-  while (!(i2c_port & _BV(i2c_scl)));
+  while (!(i2c_pin & _BV(i2c_scl)));
   _delay_us(T2_TWI);
 
   // pull data line low
@@ -99,6 +96,7 @@ void i2c_stop() {
 }
 
 unsigned char transfer(unsigned char mask) {
+  // ensure clock line is low
   i2c_port &= ~_BV(i2c_scl);
   i2c_status = mask;
 
@@ -151,10 +149,10 @@ unsigned char i2c_write_byte(unsigned char data) {
  */
 unsigned char i2c_read_byte(bool ack) {
   // HIGH value means stop sending
-  unsigned char response = 0xff;
+  unsigned char response = I2C_NACK;
   if (ack) {
     // LOW means read another byte
-    response = 0x00;
+    response = I2C_ACK;
   }
   // change data pin to input
   i2c_ddr &= ~_BV(i2c_sda);
@@ -177,6 +175,6 @@ unsigned char i2c_read_byte(bool ack) {
 unsigned char i2c_write_address(unsigned char address, bool write) {
   unsigned char rw_flag = 1;
   if (write) rw_flag = 0;
-  // shift address over 1 because Least sig byte is RW flag
+  // shift address over 1 because Least sig bit is RW flag
   return i2c_write_byte(((address << 1) | rw_flag));
 }
