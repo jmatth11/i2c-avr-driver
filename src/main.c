@@ -26,7 +26,9 @@ static void setup_led() {
 
 int main (void) {
   setup_led();
-  i2c_init();
+  i2c_init(
+    true // using internal pullup resistors
+  );
   while(1) {
     if(!i2c_start()) error_loop();
     if (i2c_write_address(TARGET_ADDR, true) & 0x01) {

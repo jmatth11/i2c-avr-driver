@@ -14,10 +14,7 @@
    _BV(USIDC) | \
    (0xE << USICNT0))// we set the clock to 1110 so it overflows after 1 exchange
 
-/**
- * Initialize I2C registers and ports.
- */
-void i2c_init() {
+void i2c_init(bool internal_pullups) {
   // preload data register with default HIGH
   i2c_data = 0xff;
 
@@ -41,20 +38,20 @@ void i2c_init() {
     // reset overflow counter
     (0x0 << USICNT0)
   );
-  // flip the ports to input mode so we can enable pullup resistors on the next line
-  i2c_ddr &= ~_BV(i2c_sda);
-  i2c_ddr &= ~_BV(i2c_scl);
 
-  // set both pins to HIGH to enable pullup.
-  i2c_port |= (_BV(i2c_sda) | _BV(i2c_scl));
+  if (internal_pullups) {
+    // flip the ports to input mode so we can enable pullup resistors on the next line
+    i2c_ddr &= ~_BV(i2c_sda);
+    i2c_ddr &= ~_BV(i2c_scl);
+
+    // set both pins to HIGH to enable pullup.
+    i2c_port |= (_BV(i2c_sda) | _BV(i2c_scl));
+  }
 
   // flip the ports to output mode
   i2c_ddr |= (_BV(i2c_sda) | _BV(i2c_scl));
 }
 
-/**
- * Send start command.
- */
 bool i2c_start() {
   // ensure both lines are high
   i2c_port |= (_BV(i2c_sda) | _BV(i2c_scl));
@@ -76,9 +73,6 @@ bool i2c_start() {
   return (i2c_status & _BV(USISIF));
 }
 
-/**
- * Send the stop command.
- */
 void i2c_stop() {
 
   // ensure data line is low
@@ -123,12 +117,6 @@ unsigned char transfer(unsigned char mask) {
   return data;
 }
 
-/**
- * Write the given byte.
- *
- * @param[in] data The byte to send.
- * @return The N/ACK byte.
- */
 unsigned char i2c_write_byte(unsigned char data) {
   i2c_data = data;
   transfer(STATUS_CLOCK_8_BITS);
@@ -141,12 +129,6 @@ unsigned char i2c_write_byte(unsigned char data) {
   return nack;
 }
 
-/**
- * Read the next byte.
- *
- * @param[in] ack True for reading more, false otherwise.
- * @return The read byte.
- */
 unsigned char i2c_read_byte(bool ack) {
   // HIGH value means stop sending
   unsigned char response = I2C_NACK;
@@ -165,13 +147,6 @@ unsigned char i2c_read_byte(bool ack) {
   return data;
 }
 
-/**
- * Write the target's address out.
- *
- * @param[in] address The target address.
- * @param[in] write Flag for Write or Read bit.
- * @return The N/ACK byte.
- */
 unsigned char i2c_write_address(unsigned char address, bool write) {
   unsigned char rw_flag = 1;
   if (write) rw_flag = 0;

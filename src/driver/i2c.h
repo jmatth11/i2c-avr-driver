@@ -48,11 +48,15 @@
 
 /**
  * Initialize I2C registers and ports.
+ *
+ * @param[in] internal_pullups Flag for using internal pullup resistors,
+ *  False for external.
  */
-void i2c_init();
+void i2c_init(bool internal_pullups);
 
 /**
  * Send start command.
+ *
  * @return True if the start successfully initiated, False otherwise.
  */
 bool i2c_start();
@@ -64,6 +68,7 @@ void i2c_stop();
 
 /**
  * Write the given byte.
+ *
  * @param[in] data The byte to send.
  * @return The N/ACK byte.
  */
